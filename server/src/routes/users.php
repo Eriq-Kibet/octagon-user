@@ -55,26 +55,33 @@ $app->post('/api/signin', function (Request $request, Response $reponse, array $
     $input = $request->getParsedBody();
     $phonenumber = $input['phonenumber'];
     $password = $input['password'];
- 
-    try {
-        //get db object
-        $db = new db();
-        //conncect
-        $pdo = $db->connect();
-
-        $sql = "SELECT * FROM users WHERE phonenumber = $phonenumber AND password = '$password'";
-
-        $stmt = $pdo->query($sql);
-        $user = $stmt->fetchAll(PDO::FETCH_OBJ);
-        if (!empty($user)){
-        echo '{"success": {"text": "'. $user.' has been loggen in succcessfully"}}';
-        }else{
-            echo '{"success": {"text": "You have entered a wrong password/username"}}';
+    if(!empty($phonenumber && !empty($password))){ // check if phonenumber and password are empty
+        try {
+            //get db object
+            $db = new db();
+            //conncect
+            $pdo = $db->connect();
+    
+            $sql = "SELECT * FROM users WHERE phonenumber = $phonenumber AND password = '$password'";
+    
+            $stmt = $pdo->query($sql);
+            $user = $stmt->fetchAll(PDO::FETCH_OBJ);
+            // Check if user in not null
+            if (!empty($user)){
+                // Genaerate Token
+                $token = base64_encode(random_bytes(64));
+            echo '{"success": {"text": "'. $user.' has been loggen in succcessfully"},{"token":'.$token.'}}';
+            }else{
+                echo '{"success": {"text": "You have entered a wrong password/username"}}';
+            }
+            $pdo = null;
+        } catch (\PDOException $e) {
+            echo '{"error": {"text": ' . $e->getMessage() .  '}}';
         }
-        $pdo = null;
-    } catch (\PDOException $e) {
-        echo '{"error": {"text": ' . $e->getMessage() .  '}}';
+    }else{
+        echo '{"success": {"text": "username or password has not been entered"}}';
     }
+    
 });
 
 //Add a User to the DB
@@ -84,23 +91,33 @@ $app->post('/api/signup', function (Request $request, Response $reponse, array $
     $lastname = $input['lastname'];
     $phonenumber = $input['phonenumber'];
     $password = $input['password'];
- 
-    try {
-        //get db object
-        $db = new db();
-        //conncect
-        $pdo = $db->connect();
+    if(!empty($firstname && !empty($lastname && !empty($phonenumber && !empty($password))))){ // check if values are null
+        try {
+            //get db object
+            $db = new db();
+            //conncect
+            $pdo = $db->connect();
+            
+            $sql2 = "SELECT * FROM users WHERE phonenumber = $phonenumber";
+    
+            $stmt = $pdo->query($sql2);
+            $user = $stmt->fetchAll(PDO::FETCH_OBJ);
+            // Check if phonenumber exists
+            if(empty($user)){
+            $sql = "INSERT INTO users (phonenumber,password,firstname, lastname) VALUES (?,?,?,?)";
+    
+            $pdo->prepare($sql)->execute([$phonenumber, $password, $firstname, $lastname]);
+    
+            echo '{"success": {"text": "User '. $firstname .' has been succcessfully added"}}';
+            $pdo = null;
+            }else{echo '{"success": {"text": "'. $phonenumber .' is already registered, use another number"}}';}
 
-
-        $sql = "INSERT INTO users (phonenumber,password,firstname, lastname) VALUES (?,?,?,?)";
-
-
-        $pdo->prepare($sql)->execute([$phonenumber, $password, $firstname, $lastname]);
-
-        echo '{"success": {"text": "User '. $firstname .' has been succcessfully added"}}';
-        $pdo = null;
-    } catch (\PDOException $e) {
-        echo '{"error": {"text": ' . $e->getMessage() .  '}}';
+        } catch (\PDOException $e) {
+            echo '{"error": {"text": ' . $e->getMessage() .  '}}';
+        }
+    }else{
+        echo '{"success": {"text": "Enter all values"}}'; 
     }
+    
 });
 $app->run();
