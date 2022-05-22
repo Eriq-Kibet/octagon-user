@@ -45,11 +45,35 @@ $app->get('/api/users/{id}', function (Request $request, Response $reponse, arra
         $user = $stmt->fetchAll(PDO::FETCH_OBJ);
 
         $pdo = null;
-
-
         echo json_encode($user);
     } catch (\PDOException $e) {
         echo '{"msg": {"resp": ' . $e->getMessage() . '}}';
+    }
+});
+//Sign in User
+$app->post('/api/signin', function (Request $request, Response $reponse, array $args) {
+    $input = $request->getParsedBody();
+    $phonenumber = $input['phonenumber'];
+    $password = $input['password'];
+ 
+    try {
+        //get db object
+        $db = new db();
+        //conncect
+        $pdo = $db->connect();
+
+        $sql = "SELECT * FROM users WHERE phonenumber = $phonenumber AND password = '$password'";
+
+        $stmt = $pdo->query($sql);
+        $user = $stmt->fetchAll(PDO::FETCH_OBJ);
+        if (!empty($user)){
+        echo '{"success": {"text": "'. $user.' has been loggen in succcessfully"}}';
+        }else{
+            echo '{"success": {"text": "You have entered a wrong password/username"}}';
+        }
+        $pdo = null;
+    } catch (\PDOException $e) {
+        echo '{"error": {"text": ' . $e->getMessage() .  '}}';
     }
 });
 
