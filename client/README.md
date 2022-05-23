@@ -1,3 +1,27 @@
 This is the frontend
 
-Instructions
+# Navigate to the  client Folder and run the following commands
+
+## Navigate to the 
+## Project setup (install required dendecies)
+```
+npm install
+```
+
+### Compiles and hot-reloads the frontend
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
