@@ -1,7 +1,5 @@
 This is the backend
 
-This is the frontend
-
 # Server
 
 ### Navigate to the server folder and run the commands below

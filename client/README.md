@@ -2,7 +2,6 @@ This is the frontend
 
 # Navigate to the  client Folder and run the following commands
 
-## Navigate to the 
 ## Project setup (install required dendecies)
 ```
 npm install
