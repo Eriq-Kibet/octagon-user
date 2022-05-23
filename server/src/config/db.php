@@ -1,15 +1,16 @@
 <?php
-
 class db
 {
     
     public function connect()
     {
-
-        $host = "127.0.0.1";
-        $user = "cire";
-        $pass = "MKUe1d@1CT";
-        $dbname = "octagon";
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__."./../../../server"); 
+        $dotenv->load();
+        
+        $host = $_ENV['HOST'];
+        $user = $_ENV['USER_NAME'];
+        $pass = $_ENV['PASSWORD'];
+        $dbname = $_ENV['DB_NAME'];
 
         //connect database using php pdo wrapper 
         $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);

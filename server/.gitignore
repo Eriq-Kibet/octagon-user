@@ -1,6 +1,8 @@
 vendor/*
 ./env
 .\env
+.env/
+.env\
 .env
 composer.lock
 .phpunit.result.cache
