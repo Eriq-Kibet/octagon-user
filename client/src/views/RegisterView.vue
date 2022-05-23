@@ -49,6 +49,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   name: "registerView",
   data() {
@@ -60,7 +61,20 @@ export default {
     };
   },
   methods: {
-    register: function () {
+    register: async function () {
+      const auth = {
+        username: this.username,
+        password: this.password,
+        firstname: this.firstname,
+      };
+      const url = "http://localhost:8888/api/signup";
+
+      try {
+        await axios.post(url, { auth }).then((res) => res.data);
+        console.log(this.res.data);
+      } catch (err) {
+        this.error = err.message;
+      }
       console.log("first" + this.firstname);
       console.log("last" + this.lastname);
       console.log("phone" + this.phonenumber);

@@ -38,6 +38,7 @@
 
 <script>
 import axios from "axios";
+axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
 export default {
   name: "loginView",
   data() {
@@ -47,7 +48,16 @@ export default {
     };
   },
   methods: {
-    login: function () {
+    login: async function () {
+      const auth = { username: this.username, password: this.password };
+      const url = "http://localhost:8888/api/signin";
+
+      try {
+        await axios.post(url, { auth }).then((res) => res.data);
+        console.log(this.res.data);
+      } catch (err) {
+        this.error = err.message;
+      }
       console.log("phone" + this.phonenumber);
       console.log("pass" + this.password);
       console.log("pass" + this.info);
