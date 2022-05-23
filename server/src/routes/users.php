@@ -120,4 +120,9 @@ $app->post('/api/signup', function (Request $request, Response $reponse, array $
     }
     
 });
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function($req, $res) {
+    $handler = $this->notFoundHandler; // handle using the default Slim page not found handler
+    return $handler($req, $res);
+});
+
 $app->run();
