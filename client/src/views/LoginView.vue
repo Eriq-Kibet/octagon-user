@@ -48,15 +48,16 @@ export default {
   },
   methods: {
     login: function () {
-      axios
-        .get("https://api.coindesk.com/v1/bpi/currentprice.json")
-        .then((response) => (this.info = response));
       console.log("phone" + this.phonenumber);
       console.log("pass" + this.password);
       console.log("pass" + this.info);
     },
   },
-  mounted() {},
+  mounted() {
+    axios
+      .get("https://api.coindesk.com/v1/bpi/currentprice.json")
+      .then((response) => (this.info = response));
+  },
 };
 </script>
 
