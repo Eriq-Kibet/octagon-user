@@ -10,6 +10,7 @@
           <input
             type="number"
             class="form-control"
+            required
             id="phoneNumber"
             v-model="phonenumber"
             placeholder="Enter phonenumber"
@@ -22,13 +23,16 @@
           <input
             type="password"
             class="form-control"
+            required
             id="password"
             v-model="password"
             placeholder="Password"
           />
         </div>
 
-        <button @click="login" class="btn btn-primary">Submit</button>
+        <button @click="login" type="submit" class="btn btn-primary">
+          Submit
+        </button>
       </div>
       <div class="col-md-3"></div>
     </div>
@@ -38,7 +42,6 @@
 
 <script>
 import axios from "axios";
-axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
 export default {
   name: "loginView",
   data() {
@@ -50,11 +53,22 @@ export default {
   methods: {
     login: async function () {
       const auth = { username: this.username, password: this.password };
-      const url = "http://localhost:8888/api/signin";
+      const url = "https://api.coindesk.com/v1/bpi/currentprice.json";
 
       try {
-        await axios.post(url, { auth }).then((res) => res.data);
-        console.log(this.res.data);
+        await axios.get(url, auth).then((res) => {
+          this.info = res;
+          if (res.data.token) {
+            //store the token in local storage
+            localStorage.setItem("token", this.token);
+            // navigate to  about on login
+            this.$router.push("/about");
+          } else if (!res.data.token) {
+            console.log("Enter the correct password or username");
+          }
+        });
+
+        console.log(this.info);
       } catch (err) {
         this.error = err.message;
       }
@@ -62,11 +76,6 @@ export default {
       console.log("pass" + this.password);
       console.log("pass" + this.info);
     },
-  },
-  mounted() {
-    axios
-      .get("https://api.coindesk.com/v1/bpi/currentprice.json")
-      .then((response) => (this.info = response));
   },
 };
 </script>
