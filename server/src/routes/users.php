@@ -72,14 +72,14 @@ $app->post('/api/signin', function (Request $request, Response $reponse, array $
                 $token = base64_encode(random_bytes(64));
             echo '{"success": {"text": "'. $user.' has been loggen in succcessfully"},{"token":'.$token.'}}';
             }else{
-                echo '{"success": {"text": "You have entered a wrong password/username"}}';
+                echo '{"fail": {"text": "You have entered a wrong password/username"}}';
             }
             $pdo = null;
         } catch (\PDOException $e) {
             echo '{"error": {"text": ' . $e->getMessage() .  '}}';
         }
     }else{
-        echo '{"success": {"text": "username or password has not been entered"}}';
+        echo '{"fail": {"text": "username or password has not been entered"}}';
     }
     
 });
@@ -110,19 +110,15 @@ $app->post('/api/signup', function (Request $request, Response $reponse, array $
     
             echo '{"success": {"text": "User '. $firstname .' has been succcessfully added"}}';
             $pdo = null;
-            }else{echo '{"success": {"text": "'. $phonenumber .' is already registered, use another number"}}';}
+            }else{echo '{"fail": {"text": "'. $phonenumber .' is already registered, use another number"}}';}
 
         } catch (\PDOException $e) {
             echo '{"error": {"text": ' . $e->getMessage() .  '}}';
         }
     }else{
-        echo '{"success": {"text": "Enter all values"}}'; 
+        echo '{"fail": {"text": "Enter all values"}}'; 
     }
     
-});
-$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function($req, $res) {
-    $handler = $this->notFoundHandler; // handle using the default Slim page not found handler
-    return $handler($req, $res);
 });
 
 $app->run();
