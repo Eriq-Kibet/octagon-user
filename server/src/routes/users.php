@@ -3,33 +3,34 @@
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 
+class UserController{
+    function index(Request $request, Response $reponse){
+        $reponse->getBody()->write('Welcome to octagon users API'); 
+    }
+    function users(Request $request, Response $reponse, array $args){
+        $sql = "SELECT * FROM users ";
 
+        try {
+            $db = new db();
+            $pdo = $db->connect();
+    
+            $stmt = $pdo->query($sql);
+            $user = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
+            $pdo = null;
+        
+            echo json_encode($user);
+        } catch (\PDOException $e) {
+            echo '{"msg": {"resp": ' . $e->getMessage() . '}}';
+        }
+    }
+};
 $app = new \Slim\App;
 
-$app->get('/api', function (Request $request, Response $reponse) {
-    $reponse->getBody()->write('Welcome to octagon users API');
-});
+$app->get('/api', UserController::class.':index');
 
 //get all users
-$app->get('/api/users', function (Request $request, Response $reponse, array $args) {
-
-    $sql = "SELECT * FROM users ";
-
-    try {
-        $db = new db();
-        $pdo = $db->connect();
-
-        $stmt = $pdo->query($sql);
-        $user = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-        $pdo = null;
-
-
-        echo json_encode($user);
-    } catch (\PDOException $e) {
-        echo '{"msg": {"resp": ' . $e->getMessage() . '}}';
-    }
-});
+$app->get('/api/users', UserController::class.':users');
 
 //get a single user
 $app->get('/api/users/{id}', function (Request $request, Response $reponse, array $args) {
