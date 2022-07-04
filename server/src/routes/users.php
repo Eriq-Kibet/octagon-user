@@ -1,12 +1,30 @@
 <?php
+/**
+ * @OA\Info(title="My First API", version="0.1")
+ */
 
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
+use \OpenApi\Generator as openApi;
+
 
 class UserController{
-    function index(Request $request, Response $reponse){
-        $reponse->getBody()->write('Welcome to octagon users API'); 
+    public function index(Request $request, Response $reponse, array $arg){
+        
+        echo 'Welcome to octagon users API'; 
     }
+    public function api(){
+        $openapi = openApi::scan(['/server/src/routes/users']);
+        header('Content-Type: application/json');
+        echo $openapi->toJSON();
+    }
+
+    /**
+ * @OA\Get(
+ *     path="../../src/routes/users/users",
+ *     @OA\Response(response="200", description="An example resource")
+ * )
+ */
     function users(Request $request, Response $reponse, array $args){
         $sql = "SELECT * FROM users ";
 
@@ -25,12 +43,18 @@ class UserController{
         }
     }
 };
-$app = new \Slim\App;
 
-$app->get('/api', UserController::class.':index');
+
+// var_dump($UserController);
+
+
+$app->get('/api', UserController::class. ':index');
+
+
+$app->get('/apii', UserController::class. ':api');
 
 //get all users
-$app->get('/api/users', UserController::class.':users');
+$app->get('/api/users', UserController::class. ':users');
 
 //get a single user
 $app->get('/api/users/{id}', function (Request $request, Response $reponse, array $args) {
